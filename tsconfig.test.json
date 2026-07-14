@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".test-dist",
+    "rootDir": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "isolatedModules": false,
+    "incremental": false
+  },
+  "include": ["tests/**/*.ts", "lib/validation/application.ts", "lib/paypal/validation.ts"],
+  "exclude": ["node_modules", ".next", ".test-dist"]
+}

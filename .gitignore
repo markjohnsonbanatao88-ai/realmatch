@@ -1,0 +1,30 @@
+node_modules
+.next
+.test-dist
+out
+dist
+.env
+.env.local
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Dependencies and builds
+node_modules/
+.next/
+dist/
+build/
+
+# Local secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Logs
+*.log
