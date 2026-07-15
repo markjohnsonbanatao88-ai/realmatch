@@ -26,16 +26,6 @@ jobs:
       - name: Install dependencies (reproducible)
         run: npm ci
 
-      - name: Generate lint report
-        run: npx eslint . --format json --output-file lint-report.json || true
-
-      - name: Upload lint report
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: lint-report.json
-          retention-days: 1
-
       - name: Lint
         run: npm run lint
 
