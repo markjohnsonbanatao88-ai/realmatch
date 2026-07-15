@@ -8,15 +8,17 @@ This runbook records what is already provisioned and what must still be complete
 - Project reference: `ijqivgnlqndddftgazxc`
 - Region: `ap-northeast-1`
 - Status at provisioning check: `ACTIVE_HEALTHY`
-- Applied migrations:
+- Applied operational migrations:
   - `initial_schema_core`
   - `initial_schema_operations`
   - `initial_schema_integrity`
   - `row_level_security`
   - `atomic_application_intake`
   - `function_execution_hardening`
+  - `harden_staff_role_helper`
+  - `add_foreign_key_indexes`
 
-The repository migration chain remains `0001` through `0004`; the first repository migration was applied in controlled operational segments because the remote migration executor rejected the initial hand-assembled payload before any DDL was committed.
+The canonical repository migration chain is now `0001` through `0006`. The original `0001` schema was applied to the empty production project in controlled segments because the remote migration executor rejected an earlier hand-assembled payload before any DDL was committed. Migrations `0004` through `0006` explicitly record the post-provisioning security and indexing changes so a fresh environment converges on the same schema.
 
 ## Verified database behaviour
 
@@ -35,14 +37,15 @@ No test applicant, staff account, or test PII remained after rollback.
 
 ## Supabase security-advisor position
 
-The trigger and intake functions were explicitly stripped of anon/authenticated API execution. Only the service role may execute the atomic intake RPC.
+Trigger and intake functions were explicitly stripped of anon/authenticated API execution. Only the service role may execute the atomic intake RPC.
 
-Two advisor notices remain by design:
+The staff-role helper now lives in the non-exposed `private` schema. Authenticated users may execute it only because RLS policies need to resolve the caller's own active role; it returns that role or null and is not exposed as a public REST RPC.
 
-1. `application_submission_attempts` has RLS enabled with no client policy because it is a server-only throttling ledger.
-2. `current_staff_role()` is a `SECURITY DEFINER` function callable by authenticated users because RLS policies need it to resolve the caller's own active role. It returns only that caller's role or null.
+One informational advisor notice remains by design: `application_submission_attempts` has RLS enabled with no client policy because it is a server-only throttling ledger.
 
-Review the current security advisor after every DDL change.
+Performance advisor notices about unused indexes are expected in an empty database. The foreign-key support indexes in migration `0006` must not be removed before production query data exists. Multiple permissive-policy notices should be revisited after real workload profiling; they currently express intentional staff-or-owner access paths.
+
+Review both security and performance advisors after every DDL change.
 
 ## Required Vercel environment configuration
 
