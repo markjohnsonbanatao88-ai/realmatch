@@ -52,7 +52,8 @@ export async function getActiveStaffByUserId(userId: string) {
 }
 
 export async function getCurrentStaff(): Promise<StaffSession | null> {
-  const accessToken = cookies().get(STAFF_COOKIE)?.value;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(STAFF_COOKIE)?.value;
   if (!accessToken) return null;
 
   try {
