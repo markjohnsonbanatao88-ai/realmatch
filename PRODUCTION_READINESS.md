@@ -9,7 +9,7 @@ truth-rules violation: the site's public claims derive from this status.
 - [ ] Legal entity verified and named in the site footer and terms
 - [ ] Terms of Service reviewed and approved by qualified counsel
 - [ ] Privacy Policy reviewed and approved by counsel (UK GDPR mapped)
-- [x] Supabase project provisioned; migrations `0001` through `0005` applied
+- [x] Supabase project provisioned; migrations `0001` through `0006` applied
 - [ ] RLS policies tested with every staff/member role account (anonymous and
       ordinary authenticated default-deny have been verified)
 - [x] Server-side intake implemented and database-proven (validation, durable
