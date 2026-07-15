@@ -279,7 +279,7 @@ export function ApplicationForm() {
   );
 }
 
-function ErrorSummary({ errors, summaryRef, onSelect }: { errors: FieldErrors; summaryRef: React.RefObject<HTMLDivElement>; onSelect: (name: string) => void }) {
+function ErrorSummary({ errors, summaryRef, onSelect }: { errors: FieldErrors; summaryRef: React.RefObject<HTMLDivElement | null>; onSelect: (name: string) => void }) {
   const entries = Object.entries(errors);
   if (entries.length === 0) return null;
   return (
