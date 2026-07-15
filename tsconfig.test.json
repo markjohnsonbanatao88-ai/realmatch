@@ -9,6 +9,11 @@
     "isolatedModules": false,
     "incremental": false
   },
-  "include": ["tests/**/*.ts", "lib/validation/application.ts", "lib/paypal/validation.ts"],
+  "include": [
+    "tests/**/*.ts",
+    "lib/validation/application.ts",
+    "lib/paypal/validation.ts",
+    "lib/security/fingerprint.ts"
+  ],
   "exclude": ["node_modules", ".next", ".test-dist"]
 }

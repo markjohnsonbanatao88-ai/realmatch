@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { serviceConfig } from "@/lib/config/site";
-import { requireRuntimeSettings } from "@/lib/env";
+import { getApplicationHashSecret, requireRuntimeSettings } from "@/lib/env";
 import { submitApplication } from "@/lib/applications/server";
+import { requestFingerprint } from "@/lib/security/fingerprint";
 import { requestClientKey, takeRateLimit } from "@/lib/security/rate-limit";
 import { readJsonWithinLimit, RequestBodyTooLargeError } from "@/lib/security/request";
+import { SupabaseRequestError } from "@/lib/supabase/http";
 import { parseApplicationDraft, validateAll } from "@/lib/validation/application";
 
 export const runtime = "nodejs";
@@ -47,8 +49,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    requireRuntimeSettings("supabase");
-    const result = await submitApplication(draft, idempotencyKey);
+    requireRuntimeSettings("applicationIntake");
+    const requestHash = requestFingerprint(request.headers, getApplicationHashSecret());
+    const result = await submitApplication(draft, idempotencyKey, requestHash);
     if (result.duplicateEmail) {
       return NextResponse.json(
         { error: "An application using this email address is already in review." },
@@ -56,7 +59,13 @@ export async function POST(request: Request) {
       );
     }
     return NextResponse.json({ reference: result.reference, duplicate: result.duplicate }, { status: 201 });
-  } catch {
+  } catch (error) {
+    if (error instanceof SupabaseRequestError && error.message.includes("RATE_LIMITED")) {
+      return NextResponse.json(
+        { error: "Please wait before trying again." },
+        { status: 429, headers: { "Retry-After": "3600" } }
+      );
+    }
     // Never log request bodies or expose database/provider errors containing personal data.
     return NextResponse.json(
       { error: "We could not save your application. Please try again shortly." },

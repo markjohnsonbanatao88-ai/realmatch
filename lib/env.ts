@@ -2,6 +2,7 @@ import "server-only";
 
 type RequiredRuntimeSetting =
   | "supabase"
+  | "applicationIntake"
   | "paypal"
   | "paypalWebhook";
 
@@ -14,12 +15,17 @@ export function hasRuntimeSettings(setting: RequiredRuntimeSetting) {
     nonEmpty(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     nonEmpty(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) &&
     nonEmpty(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const applicationIntake =
+    supabase &&
+    nonEmpty(process.env.APPLICATION_HASH_SECRET) &&
+    process.env.APPLICATION_HASH_SECRET!.trim().length >= 32;
   const paypal =
     nonEmpty(process.env.PAYPAL_CLIENT_ID) &&
     nonEmpty(process.env.PAYPAL_CLIENT_SECRET) &&
     (process.env.PAYPAL_ENVIRONMENT === "sandbox" || process.env.PAYPAL_ENVIRONMENT === "live");
 
   if (setting === "supabase") return supabase;
+  if (setting === "applicationIntake") return applicationIntake;
   if (setting === "paypal") return paypal;
   return paypal && nonEmpty(process.env.PAYPAL_WEBHOOK_ID);
 }
@@ -47,4 +53,9 @@ export function getSupabasePublishableKey() {
 export function getSupabaseServiceRoleKey() {
   requireRuntimeSettings("supabase");
   return process.env.SUPABASE_SERVICE_ROLE_KEY!;
+}
+
+export function getApplicationHashSecret() {
+  requireRuntimeSettings("applicationIntake");
+  return process.env.APPLICATION_HASH_SECRET!;
 }

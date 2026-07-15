@@ -15,9 +15,13 @@ const statuses = new Set([
   "withdrawn"
 ]);
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   if (!hasSameOrigin(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
-  if (!/^[0-9a-f-]{36}$/i.test(params.id)) return NextResponse.json({ error: "Invalid application." }, { status: 400 });
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: "Invalid application." }, { status: 400 });
   const staff = await getCurrentStaff();
   if (!staff || !canAccess(staff, ["administrator", "reviewer"])) {
     return NextResponse.json({ error: "Reviewer authorization is required." }, { status: 403 });
@@ -28,17 +32,17 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   try {
     const db = createSupabaseServerClient(staff.accessToken);
-    const updated = await db.update<{ id: string }>("applications", `id=eq.${params.id}`, { status });
+    const updated = await db.update<{ id: string }>("applications", `id=eq.${id}`, { status });
     if (!updated[0]) return NextResponse.json({ error: "Application not found." }, { status: 404 });
 
     if (status === "accepted") {
       const existing = await db.select<{ id: string }>(
         "member_profiles",
-        `select=id&application_id=eq.${params.id}&limit=1`
+        `select=id&application_id=eq.${id}&limit=1`
       );
       if (!existing[0]) {
         await db.insert("member_profiles", {
-          application_id: params.id,
+          application_id: id,
           membership_status: "pending_verification"
         });
       }
