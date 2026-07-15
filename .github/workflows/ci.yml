@@ -35,16 +35,6 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Generate build report
-        run: npm run build > build-report.txt 2>&1 || true
-
-      - name: Upload build report
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-report
-          path: build-report.txt
-          retention-days: 1
-
       - name: Build
         run: npm run build
 
