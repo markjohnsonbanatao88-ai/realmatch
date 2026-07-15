@@ -9,12 +9,12 @@ truth-rules violation: the site's public claims derive from this status.
 - [ ] Legal entity verified and named in the site footer and terms
 - [ ] Terms of Service reviewed and approved by qualified counsel
 - [ ] Privacy Policy reviewed and approved by counsel (UK GDPR mapped)
-- [x] Supabase project provisioned; migrations `0001` through `0004` applied
-- [ ] RLS policies tested with every staff/member role account (ordinary-user
-      default-deny and reviewer access have been verified)
-- [x] Server-side intake implemented (validation, durable rate limiting,
-      duplicate protection, idempotency, atomic consent storage,
-      server-generated reference, and no sensitive-field logging)
+- [x] Supabase project provisioned; migrations `0001` through `0005` applied
+- [ ] RLS policies tested with every staff/member role account (anonymous and
+      ordinary authenticated default-deny have been verified)
+- [x] Server-side intake implemented and database-proven (validation, durable
+      rate limiting, duplicate protection, idempotency, atomic consent storage,
+      server-generated reference, status history, and audit triggers)
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` configured in Vercel and confirmed server-only
       (never in a client bundle)
 - [ ] `APPLICATION_HASH_SECRET` configured in Vercel as a protected 32+ character secret
