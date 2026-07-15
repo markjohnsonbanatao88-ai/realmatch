@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/application-validation.test.js",
+    "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/*.test.js",
     "test:db": "supabase test db",
     "audit:high": "npm audit --audit-level=high"
   },
