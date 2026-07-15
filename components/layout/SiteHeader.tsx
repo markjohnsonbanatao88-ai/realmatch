@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { serviceConfig } from "@/lib/config/site";
 
 const navItems = [
@@ -13,9 +13,9 @@ const navItems = [
   { href: "/faq", label: "FAQ" }
 ];
 
-function Brand() {
+function Brand({ onClick }: { onClick?: MouseEventHandler<HTMLAnchorElement> }) {
   return (
-    <Link href="/" className="brand" aria-label="Real Match home">
+    <Link href="/" className="brand" aria-label="Real Match home" onClick={onClick}>
       Real<span className="brand-mark">&nbsp;Match</span>
     </Link>
   );
@@ -27,11 +27,6 @@ export function SiteHeader() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const applicationLabel = serviceConfig.applicationsEnabled ? "Apply privately" : "Application preview";
-
-  // Close the drawer whenever navigation occurs.
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   // Focus trap, Escape handling, scroll lock, and focus restoration.
   useEffect(() => {
@@ -124,7 +119,7 @@ export function SiteHeader() {
           aria-label="Site navigation"
         >
           <div className="nav-drawer-head">
-            <Brand />
+            <Brand onClick={() => setOpen(false)} />
             <button
               type="button"
               className="nav-toggle"
